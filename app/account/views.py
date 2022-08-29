@@ -10,7 +10,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_yasg.utils import swagger_auto_schema
 
-from .serializers import AccountSerializer, LoginAccountSerializer, MobileCarrierSerializer
+from .serializers import AccountSerializer, LoginAccountSerializer, \
+    MobileCarrierSerializer, ResetPasswordSerializer
 from .models import Account, MobileCarrier
 from certification.models import PhoneCertificationLog
 from core.utils.response_format import base_api_response
@@ -241,6 +242,85 @@ class AccountView(generics.GenericAPIView):
             e_str = e.__str__()
             logger.error(e_str)
             return base_api_response(False, status.HTTP_401_UNAUTHORIZED)
+
+
+class ResetPasswordView(viewsets.GenericViewSet, mixins.UpdateModelMixin):
+    """
+       비밀번호 변경 API
+
+       ---
+        * 전화번호 인증 후에 사용
+       ---
+        1. phone number에 대해 계정 검색
+        2. 입력된 password에 대해 검증
+        3. log_id에 대하 인증 로그 조회 및 인증여부 검증, 인증 로그가 없거나 인증이 되지 않았을 경우 return Error
+        4. password 암호화
+        5. 계정에 대해 password 변경
+        6. 전화번호 인증 로그 삭제
+       ---
+       # Request Param
+           - log_id : 전화번호 인증 로그 아이디
+           - phone_number : 전화 번호
+           - new_password : 변경할 비밀번호 (8자 이상, 숫자+영문)
+
+       # Response Param
+           - result: 성공 여부
+           - message: 내용
+           - data: 사용자 닉네임
+    """
+    serializer_class = ResetPasswordSerializer
+
+    @swagger_auto_schema(tags=['계정'])
+    def partial_update(self, request, *args, **kwargs):
+        try:
+            try:
+                phone_number = request.data["phone_number"]
+                log_id = request.data["log_id"]
+                new_password = request.data["new_password"]
+            except Exception as request_e:
+                request_e_str = request_e.__str__()
+                logger.error(request_e_str)
+                return base_api_response(False, status.HTTP_400_BAD_REQUEST, message=request_e_str)
+
+            # 계정 검색
+            try:
+                account = Account.objects.get(phone_number=phone_number)
+            except Exception as exist_e:
+                exist_e_str = exist_e.__str__()
+                logger.error(exist_e_str)
+                return base_api_response(False, status.HTTP_401_UNAUTHORIZED, message="account does not exist")
+
+            # 비밀번호 검증
+            if check_validate("password", new_password) is False:
+                return base_api_response(False, status.HTTP_400_BAD_REQUEST, message="password is not valid")
+
+            try:
+                # 인증 로그 조회
+                log = PhoneCertificationLog.objects.filter(id=log_id).latest('updated_at')
+
+                # 인증 검증
+                if not log.is_certificated:
+                    raise Exception
+            except Exception as exist_e:
+                exist_e_str = exist_e.__str__()
+                logger.error(exist_e_str)
+                return base_api_response(False, status.HTTP_401_UNAUTHORIZED, message="not authenticated")
+
+            # 비밀번호 암호화
+            new_password = make_password(new_password)
+
+            # 비밀번호 변경
+            account.password = new_password
+            account.save()
+
+            # 인증 로그 삭제
+            log.delete()
+
+            return base_api_response(True, status.HTTP_200_OK, data=str(account))
+        except Exception as e:
+            e_str = e.__str__()
+            logger.error(e_str)
+            return base_api_response(False, status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class RetrieveMobileCarrierView(viewsets.GenericViewSet, mixins.ListModelMixin):

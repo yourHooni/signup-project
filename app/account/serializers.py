@@ -25,11 +25,11 @@ class LoginAccountSerializer(serializers.Serializer):
     id = serializers.CharField(label='계정 아이디(이메일 또는 전화번호)')
     password = serializers.CharField(label='계정 비밀번호')
 
-    def validate(self, data):
-        user = authenticate(**data)
-        if user and user.is_active:
-            return user
-        raise serializers.ValidationError("Unable to log in with provided credentials.")
+
+class ResetPasswordSerializer(serializers.Serializer):
+    phone_number = serializers.CharField(label='휴대폰 번호')
+    log_id = serializers.CharField(label='인증 로그 아이디')
+    new_password = serializers.CharField(label='변경할 비밀번호')
 
 
 class MobileCarrierSerializer(serializers.ModelSerializer):
