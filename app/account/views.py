@@ -25,9 +25,11 @@ class SignUpView(generics.GenericAPIView):
        회원가입 API
 
        ---
+        * 전화번호 인증 후에 사용
+       ---
         1. 전화번호 인증이 되었는지 체크
         2. 입력된 email, password에 대해 검증
-        3. nick_name, email, phone_number에 대한 유효성 체크
+        3. nick_name, email, phone_number에 대해 계정이 존재하는지 체크
         4. password 암호화
         5. mobile_carrier_code로 통신사 모델 조회
         6. 계정 생성
@@ -203,6 +205,8 @@ class AccountView(generics.GenericAPIView):
     """
        유저 정보 조회 API
 
+       ---
+        * 로그인 후에 사용
        ---
         1. 유효한 토큰인지 조회
         2. 토큰에서 user_id 추출

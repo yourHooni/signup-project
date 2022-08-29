@@ -92,13 +92,15 @@ class CheckCertificationCodeViewSet(viewsets.GenericViewSet, mixins.UpdateModelM
        인증 코드 체크 API
 
        ---
-        1. 전달받은 id(log_id)에 대한 인증 로그 조회
+        * 휴대폰 인증 후에 사용
+       ---
+        1. 전달받은 log_id에 대한 인증 로그 조회
         2. 인증 코드와 전달받은 코드가 동일한지 검증, 동일하지 않으면 return error
         3. 인증 여부 체크 (인증 완료)
 
        ---
        # Request Param
-           - id : 인증 로그 아이디
+           - log_id : 인증 로그 아이디
            - code : 인증 코드
 
        # Response Param
