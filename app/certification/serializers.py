@@ -16,11 +16,11 @@ class PhoneCertificationSerializer(serializers.ModelSerializer):
 
 class CheckCertificationCodeSerializer(serializers.ModelSerializer):
     """Serializer for phone certification log objects."""
-    id = serializers.IntegerField(label='인증 로그 아이디')
+    log_id = serializers.IntegerField(label='인증 로그 아이디')
 
     class Meta:
         model = PhoneCertificationLog
-        fields = ('id', 'code')
+        fields = ('log_id', 'code')
 
 
 

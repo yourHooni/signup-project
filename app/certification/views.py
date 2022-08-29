@@ -114,7 +114,7 @@ class CheckCertificationCodeViewSet(viewsets.GenericViewSet, mixins.UpdateModelM
     def partial_update(self, request, *args, **kwargs):
         try:
             try:
-                log_id = request.data["id"]
+                log_id = request.data["log_id"]
                 code = request.data["code"]
             except Exception as request_e:
                 request_e_str = request_e.__str__()

@@ -75,7 +75,7 @@ class SignUpView(generics.GenericAPIView):
                 except Exception as log_e:
                     log_e_str = log_e.__str__()
                     logger.error(log_e_str)
-                    return base_api_response(False, status.HTTP_400_BAD_REQUEST, message="not authenticated")
+                    return base_api_response(False, status.HTTP_401_UNAUTHORIZED, message="not authenticated")
 
                 # check validate
                 if check_validate("email", email) is False:
