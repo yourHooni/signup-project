@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+from datetime import timedelta
 
 from pathlib import Path
 
@@ -42,13 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'knox',
+    'rest_framework_simplejwt',
     'drf_yasg',
     'account',
-    # 'detail',
-    # 'information',
-    # 'reservation',
-    # 'push'
+    'certification'
 ]
 
 MIDDLEWARE = [
@@ -64,7 +62,29 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'core.urls'
 
 REST_FRAMEWORK = {
-    "DEFAULT_AUTHENTICATION_CLASSES": ("knox.auth.TokenAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+}
+
+# simple jwt
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
+    'SIGNING_KEY': SECRET_KEY,
+    'ALGORITHM': 'HS256',
+    # 'AUTH_HEADER_TYPES': ('JWT',),
+
+    'AUTH_HEADER_TYPES': ('Bearer',),
+    'AUTH_HEADER_NAME': 'HTTP_AUTHORIZATION',
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'Bearer': {
+            'type': 'apiKey',
+            'name': 'Authorization',
+            'in': 'header'
+        }
+    }
 }
 
 TEMPLATES = [
@@ -95,7 +115,7 @@ DATABASES = {
 
         'HOST': 'localhost',
         'PORT': 5432,
-        'NAME': 'devdb2',
+        'NAME': 'devdb',
         'USER': 'devuser',
         'PASSWORD': 1234
     }
@@ -164,6 +184,10 @@ LOGGING = {
     },
     'loggers': {
         'account': {
+            'handlers': ['file'],
+            'level': 'DEBUG'
+        },
+        'certification': {
             'handlers': ['file'],
             'level': 'DEBUG'
         }
