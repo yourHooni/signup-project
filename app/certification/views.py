@@ -19,8 +19,9 @@ class PhoneCertificationViewSet(generics.GenericAPIView):
        휴대폰 인증 API
 
        ---
-       휴대폰 인증 테이블과 입력된 개인 정보를 비교하여 매치가 되면 인증 로그 테이블에 인증 코드 생성 및 row 생성,
-       존재하지 않으면 인증 실패 에러 출력
+       1. 입력된 개인 정보와 일치하는 인증 정보 조회, 없을 경우에 return error
+       2. 인증 코드 생성
+       3. 인증 로그 생성
 
        ---
        # Request Param
@@ -51,6 +52,7 @@ class PhoneCertificationViewSet(generics.GenericAPIView):
                 logger.error(request_e_str)
                 return base_api_response(False, status.HTTP_400_BAD_REQUEST, message=request_e_str)
 
+            # 전화번호 인증 조회
             query = Q(user_name=name) & Q(mobile_carrier_code=mobile_carrier_code) & Q(phone_number=phone_number) \
                 & Q(date_of_birth=date_of_birth) & Q(gender=gender)
             try:
@@ -61,10 +63,12 @@ class PhoneCertificationViewSet(generics.GenericAPIView):
                 return base_api_response(False, status.HTTP_401_UNAUTHORIZED, message="account does not exist")
 
             try:
+                # 인증 코드 생성
                 code_list = []
                 for i in range(10):
                     code_list.append(str(i))
 
+                # 인증 로그 생성
                 log = PhoneCertificationLog(
                     phone_certification_id=certification,
                     code=''.join(random.sample(code_list, 6))
@@ -88,7 +92,9 @@ class CheckCertificationCodeViewSet(viewsets.GenericViewSet, mixins.UpdateModelM
        인증 코드 체크 API
 
        ---
-        로그의 인증 코드와 입력된 인증 코드를 비교하여 같으면 인증여부에 True로 수정, 틀릴시에 에러 출력
+        1. 전달받은 id(log_id)에 대한 인증 로그 조회
+        2. 인증 코드와 전달받은 코드가 동일한지 검증, 동일하지 않으면 return error
+        3. 인증 여부 체크 (인증 완료)
 
        ---
        # Request Param
@@ -114,7 +120,9 @@ class CheckCertificationCodeViewSet(viewsets.GenericViewSet, mixins.UpdateModelM
                 return base_api_response(False, status.HTTP_400_BAD_REQUEST, message=request_e_str)
 
             try:
+                # 인증 로그 조회
                 log = PhoneCertificationLog.objects.filter(id=log_id).latest('updated_at')
+                # 인증 코드 검증
                 if log.code != str(code):
                     raise Exception
             except Exception as exist_e:
@@ -123,6 +131,7 @@ class CheckCertificationCodeViewSet(viewsets.GenericViewSet, mixins.UpdateModelM
                 return base_api_response(False, status.HTTP_400_BAD_REQUEST)
 
             try:
+                # 인증 여부 체크
                 log.is_certificated = True
                 log.save()
             except Exception as func_e:
