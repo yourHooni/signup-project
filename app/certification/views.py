@@ -1,5 +1,6 @@
 import logging
 import random
+from datetime import datetime
 
 from django.db.models import Q
 
@@ -20,12 +21,13 @@ class PhoneCertificationViewSet(generics.GenericAPIView):
 
        ---
        1. 입력된 개인 정보와 일치하는 인증 정보 조회, 없을 경우에 return error
+       2. 인증 정보에 대한 인증 로그가 존재하는지 검색, 삭제
        2. 인증 코드 생성
        3. 인증 로그 생성
 
        ---
        # Request Param
-           - name : 이름
+           - user_name : 이름
            - mobile_carrier_code : 통신사 코드
            - phone_number : 휴대폰 번호
            - date_of_birth : 생년월일
@@ -39,7 +41,7 @@ class PhoneCertificationViewSet(generics.GenericAPIView):
     serializer_class = PhoneCertificationSerializer
 
     @swagger_auto_schema(tags=['전화번호 인증'])
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         try:
             try:
                 name = request.data["user_name"]
@@ -61,6 +63,14 @@ class PhoneCertificationViewSet(generics.GenericAPIView):
                 exist_e_str = exist_e.__str__()
                 logger.error(exist_e_str)
                 return base_api_response(False, status.HTTP_401_UNAUTHORIZED, message="account does not exist")
+
+            try:
+                # 인증 코드 존재 여부 체크
+                PhoneCertificationLog.objects.filter(phone_certification_id=certification).delete()
+            except Exception as func_e:
+                func_e_str = func_e.__str__()
+                logger.error(func_e_str)
+                return base_api_response(False, status.HTTP_400_BAD_REQUEST, message=func_e_str)
 
             try:
                 # 인증 코드 생성
