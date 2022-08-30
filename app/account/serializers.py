@@ -21,6 +21,19 @@ class AccountSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True, 'min_length': 8}}
 
 
+class AccountViewSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Account
+        fields = ('name',
+                  'nick_name',
+                  'email',
+                  'mobile_carrier_code',
+                  'phone_number',
+                  'date_of_birth',
+                  'gender')
+
+
 class LoginAccountSerializer(serializers.Serializer):
     id = serializers.CharField(label='계정 아이디(이메일 또는 전화번호)')
     password = serializers.CharField(label='계정 비밀번호')

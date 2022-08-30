@@ -11,7 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_yasg.utils import swagger_auto_schema
 
 from .serializers import AccountSerializer, LoginAccountSerializer, \
-    MobileCarrierSerializer, ResetPasswordSerializer
+    MobileCarrierSerializer, AccountViewSerializer, ResetPasswordSerializer
 from .models import Account, MobileCarrier
 from certification.models import PhoneCertificationLog
 from core.utils.response_format import base_api_response
@@ -225,7 +225,7 @@ class AccountView(generics.GenericAPIView):
            - date_of_birth : 생년월일
            - gender : 성별
     """
-    serializer_class = AccountSerializer
+    serializer_class = AccountViewSerializer
     authentication_classes = [JWTAuthentication]
 
     @swagger_auto_schema(tags=['계정'])
@@ -240,7 +240,7 @@ class AccountView(generics.GenericAPIView):
 
             # 계정 검색
             account = Account.objects.get(id=user_id)
-            serializer = AccountSerializer(account)
+            serializer = AccountViewSerializer(account)
             return base_api_response(True, status.HTTP_200_OK, data=serializer.data)
         except Exception as e:
             e_str = e.__str__()
