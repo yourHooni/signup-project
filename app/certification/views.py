@@ -105,6 +105,7 @@ class CheckCertificationCodeViewSet(viewsets.GenericViewSet, mixins.UpdateModelM
         * 휴대폰 인증 후에 사용
        ---
         1. 전달받은 log_id에 대한 인증 로그 조회
+        2. 인증 시간 검증, 5분이 지났을 경우 reuturn error
         2. 인증 코드와 전달받은 코드가 동일한지 검증, 동일하지 않으면 return error
         3. 인증 여부 체크 (인증 완료)
 
@@ -133,7 +134,13 @@ class CheckCertificationCodeViewSet(viewsets.GenericViewSet, mixins.UpdateModelM
 
             try:
                 # 인증 로그 조회
-                log = PhoneCertificationLog.objects.filter(id=log_id).latest('updated_at')
+                log = PhoneCertificationLog.objects.get(id=log_id)
+
+                # 인증 시간(5분) 초과 검증
+                minute = (datetime.now() - log.created_at).seconds / 60
+                if minute >= 5:
+                    return base_api_response(False, status.HTTP_403_FORBIDDEN, message="Certification Timeout")
+
                 # 인증 코드 검증
                 if log.code != str(code):
                     raise Exception
