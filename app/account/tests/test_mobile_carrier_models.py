@@ -15,7 +15,7 @@ class MobileCarrierModelTests(TestCase):
         pass
 
     def tearDown(self) -> None:
-        MobileCarrier.objects.all().delete()
+        pass
 
     def test_default_mobile_carrier_values(self):
         """Test default values."""

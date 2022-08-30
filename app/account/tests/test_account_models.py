@@ -33,8 +33,7 @@ class AccountModelTests(TestCase):
         )
 
     def tearDown(self) -> None:
-        Account.objects.all().delete()
-        MobileCarrier.objects.all().delete()
+        pass
 
     def test_default_account_values(self):
         """Test default values."""
