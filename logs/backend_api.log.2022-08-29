@@ -1,0 +1,26 @@
+[29/Aug/2022 14:28:14] ERROR [account:137] Account matching query does not exist.
+[29/Aug/2022 18:15:45] ERROR [certification:50] 'name'
+[29/Aug/2022 18:19:37] ERROR [certification:52] 'name'
+[29/Aug/2022 18:21:24] ERROR [certification:52] 'name'
+[29/Aug/2022 18:21:26] ERROR [certification:52] 'name'
+[29/Aug/2022 18:23:48] ERROR [certification:76] type object 'PhoneCertificationLog' has no attribute 'create'
+[29/Aug/2022 18:25:45] ERROR [certification:76] type object 'PhoneCertificationLog' has no attribute 'create'
+[29/Aug/2022 18:27:49] ERROR [certification:76] Cannot assign "1": "PhoneCertificationLog.phone_certification_id" must be a "PhoneCertification" instance.
+[29/Aug/2022 18:48:44] ERROR [certification:76] duplicate key value violates unique constraint "certification_phonecertificationlog_phone_certification_id_key"
+DETAIL:  Key (phone_certification_id)=(1) already exists.
+
+[29/Aug/2022 18:49:08] ERROR [certification:76] duplicate key value violates unique constraint "certification_phonecertificationlog_phone_certification_id_key"
+DETAIL:  Key (phone_certification_id)=(1) already exists.
+
+[29/Aug/2022 21:44:12] ERROR [certification:86] get() returned more than one PhoneCertification -- it returned 2!
+[29/Aug/2022 21:44:26] ERROR [certification:86] get() returned more than one PhoneCertification -- it returned 2!
+[29/Aug/2022 21:44:42] ERROR [certification:86] get() returned more than one PhoneCertification -- it returned 3!
+[29/Aug/2022 21:45:24] ERROR [certification:86] get() returned more than one PhoneCertification -- it returned 2!
+[29/Aug/2022 21:46:31] ERROR [certification:85] get() returned more than one PhoneCertification -- it returned 2!
+[29/Aug/2022 21:47:42] ERROR [certification:63] get() returned more than one PhoneCertification -- it returned 2!
+[29/Aug/2022 21:48:56] ERROR [certification:63] get() returned more than one PhoneCertification -- it returned 2!
+[29/Aug/2022 21:50:16] ERROR [certification:63] get() returned more than one PhoneCertification -- it returned 3!
+[29/Aug/2022 21:50:23] ERROR [certification:63] get() returned more than one PhoneCertification -- it returned 2!
+[29/Aug/2022 22:00:42] ERROR [certification:113] 'id'
+[29/Aug/2022 22:01:37] ERROR [certification:120] 'PhoneCertificationLog' object has no attribute 'latest'
+[29/Aug/2022 22:44:12] ERROR [certification:129] 
